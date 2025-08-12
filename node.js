@@ -17,7 +17,7 @@ app.use(cors({
 }))
 app.use(express.json())
 
-mongo.connect("mongodb+srv://nandeesh:Nandbtech07@cluster0.ko2qcxc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongo.connect("")
 .then(()=>console.log("connected successfully"))
 .catch(err=>console.log("err:",err))
 
