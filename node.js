@@ -3,7 +3,7 @@ const express=require("express")
 const cors=require("cors")
 const session=require("express-session")
 const app= express()
-
+require("dotenv").config()
 app.use(session({
     secret: "mysecretkey",
     resave: false,
@@ -17,14 +17,18 @@ app.use(cors({
 }))
 app.use(express.json())
 
-mongo.connect("")
+mongo.connect(process.env.MONGO_URI)
 .then(()=>console.log("connected successfully"))
 .catch(err=>console.log("err:",err))
-
+const hotelsRouter=require("./routes/hotels")
+app.use("/",hotelsRouter)
 const schema= new mongo.Schema(
     {
         name:String,
-        email:String,
+        email:{
+            type:String,
+            unique:false
+        },
         password:String
     }
 )
@@ -71,6 +75,10 @@ function isAuthenticated(req,res,next){
 app.post("/signup", async (req,res) => {
     const {name,email,password}=req.body
     try {
+        const existingUser =await User.findOne({email})
+        if(existingUser){
+            return res.status(400).json({message:"Email already exists"})
+        }
         const temp=new User({name,email,password})
         await temp.save()
         res.status(201).json({ message: "User registered successfully" });
