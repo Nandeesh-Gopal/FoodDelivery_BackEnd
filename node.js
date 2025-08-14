@@ -81,7 +81,7 @@ app.post("/signup", async (req,res) => {
         }
         const temp=new User({name,email,password})
         await temp.save()
-        res.status(201).json({ message: "User registered successfully" });
+        res.status(201).json({ message: "User Registered successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error registering user" });
     }
