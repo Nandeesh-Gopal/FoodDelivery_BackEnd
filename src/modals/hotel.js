@@ -1,7 +1,15 @@
 const mongo=require("mongoose")
 const hotels= mongo.Schema({
     name:{type:String,require:true },
-    image:{type:String,require:true}
+    image:{type:String,require:true},
+    menu:[
+        {
+            itemname:String,
+            description:String,
+            price:Number,
+            image:String
+        }
+    ]
 })
 if(hotels){
 console.log("database created successfully")}
