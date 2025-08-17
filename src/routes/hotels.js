@@ -1,16 +1,28 @@
-const express=require("express");
-const router=express.Router();
-const hotel = require("../modals/hotel");
+const express = require("express");
+const router = express.Router();
+const Hotel = require("../models/hotel");
 
-router.get('/api/hotels',async(req,res)=>{
-    const hotels =await hotel.find()
-    res.json(hotels)
-})
-router.get('/:id/menu',async (req,res)=>{
-    const hotel=await hotel.findById(req.params.id,"menu")
-    if(!hotel){
-        res.status(404).json({message:"hotel not found"})
+// ✅ Get all hotels
+router.get("/", async (req, res) => {
+  try {
+    const hotels = await Hotel.find();
+    res.json(hotels);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ✅ Get menu by hotel id
+router.get("/:id/menu", async (req, res) => {
+  try {
+    const hotelDoc = await Hotel.findOne({ _id: req.params.id }, "menu");
+    if (!hotelDoc) {
+      return res.status(404).json({ message: "Hotel not found" });
     }
-    res.json(hotel.menu)
-})
-module.exports=router
+    res.json(hotelDoc.menu);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = router;
