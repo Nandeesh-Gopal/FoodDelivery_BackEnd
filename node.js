@@ -6,7 +6,6 @@ require("dotenv").config();
 
 const app = express();
 
-// 🔐 Session
 app.use(session({
     secret: "mysecretkey",
     resave: false,
@@ -14,23 +13,19 @@ app.use(session({
     cookie: { secure: false }
 }));
 
-// 🌍 CORS
 app.use(cors({
-    origin: "http://localhost:3000", // React frontend
+    origin: "http://localhost:3000",
     credentials: true
 }));
 app.use(express.json());
 
-// 🔗 MongoDB connection
 mongo.connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB connected"))
-    .catch(err => console.log("❌ DB Error:", err));
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.log("DB Error:", err));
 
-// Routers
-const hotelsRouter = require("./src/routes/hotels");  // ⬅️ route file
+const hotelsRouter = require("./src/routes/hotels");
 app.use("/api/hotels", hotelsRouter);
 
-// 🛠 User Schema
 const schema = new mongo.Schema({
     name: String,
     email: {
@@ -40,7 +35,6 @@ const schema = new mongo.Schema({
     password: String
 });
 
-// 🛒 Order Schema
 const schema2 = new mongo.Schema({
     userId: {
         type: mongo.Schema.Types.ObjectId,
@@ -71,7 +65,6 @@ const schema2 = new mongo.Schema({
 const Order_details = mongo.model('order_details', schema2);
 const User = mongo.model('user', schema);
 
-// 🔐 Middleware
 function isAuthenticated(req, res, next) {
     if (req.session.userId) {
         return next();
@@ -79,9 +72,7 @@ function isAuthenticated(req, res, next) {
     return res.status(401).json({ message: "Please log in" });
 }
 
-// ================== AUTH ROUTES ==================
 
-// Signup
 app.post("/signup", async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -97,7 +88,6 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-// Login
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
@@ -106,11 +96,10 @@ app.post("/login", async (req, res) => {
     }
     req.session.userId = user._id;
     req.session.email = user.email;
-    console.log("🔑 Session:", req.session);
+    console.log("Session:", req.session);
     return res.status(200).json({ message: "Login success" });
 });
 
-// Logout
 app.post("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -120,7 +109,6 @@ app.post("/logout", (req, res) => {
     });
 });
 
-// Session check
 app.get("/check-session", (req, res) => {
     if (req.session && req.session.userId) {
         return res.status(200).json({ active: true });
@@ -129,7 +117,6 @@ app.get("/check-session", (req, res) => {
     }
 });
 
-// Auth check
 app.get("/checkAuth", isAuthenticated, (req, res) => {
     if (req.session && req.session.userId) {
         return res.status(200).json({ loggedIn: true });
@@ -138,9 +125,7 @@ app.get("/checkAuth", isAuthenticated, (req, res) => {
     }
 });
 
-// ================== ORDER ROUTES ==================
 
-// Place order
 app.post("/place-order", isAuthenticated, async (req, res) => {
     try {
         const { location, phoneNo, payment, items, total } = req.body;
@@ -160,7 +145,7 @@ app.post("/place-order", isAuthenticated, async (req, res) => {
         });
 
         await newOrder.save();
-        console.log(`✅ Order placed for user: ${req.session.email}`);
+        console.log(` Order placed for user: ${req.session.email}`);
 
         res.status(201).json({
             message: "Order placed successfully",
@@ -168,21 +153,19 @@ app.post("/place-order", isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("❌ Error placing order:", error);
+        console.error(" Error placing order:", error);
         res.status(500).json({ message: "Error placing order. Please try again." });
     }
 });
 
-// Get user orders
 app.get("/orders", isAuthenticated, async (req, res) => {
     try {
         const orders = await Order_details.find({ userId: req.session.userId });
         res.status(200).json({ orders });
     } catch (error) {
-        console.error("❌ Error fetching orders:", error);
+        console.error("Error fetching orders:", error);
         res.status(500).json({ message: "Error fetching orders" });
     }
 });
 
-// ================== SERVER START ==================
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+app.listen(5000, () => console.log("Server running on port 5000"));

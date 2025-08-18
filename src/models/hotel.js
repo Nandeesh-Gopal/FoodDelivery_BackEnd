@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const menuSchema = new mongoose.Schema({
-  _id: String,   // 👈 add this so menu IDs also stay fixed
+  _id: String,
   itemname: String,
   description: String,
   price: Number,
@@ -9,10 +9,10 @@ const menuSchema = new mongoose.Schema({
 });
 
 const hotelSchema = new mongoose.Schema({
-  _id: String,   // 👈 force hotel ID to be String
+  _id: String,
   name: String,
   image: String,
   menu: [menuSchema]
-}, { _id: false }); // 👈 prevents Mongoose from adding its own _id
+}, { _id: false });
 
 module.exports = mongoose.model("Hotel", hotelSchema);

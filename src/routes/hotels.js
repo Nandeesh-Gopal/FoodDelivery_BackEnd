@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Hotel = require("../models/hotel");
 
-// ✅ Get all hotels
 router.get("/", async (req, res) => {
   try {
     const hotels = await Hotel.find();
@@ -12,7 +11,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Get menu by hotel id
 router.get("/:id/menu", async (req, res) => {
   try {
     const hotelDoc = await Hotel.findOne({ _id: req.params.id }, "menu");
