@@ -3,7 +3,6 @@ const router = express.Router();
 const { isAuthenticated } = require("../middleware/auth");
 const Hotel = require("../models/hotel");
 
-// Add new hotel
 router.post("/add", async (req, res) => {
   try {
     const { name, location } = req.body;
@@ -21,7 +20,6 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Fetch all hotels (public)
 router.get("/", async (req, res) => {
   try {
     const hotels = await Hotel.find();

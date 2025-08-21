@@ -3,19 +3,15 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-
-// Register
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // create user → password is hashed automatically (see User model)
     const user = new User({ name, email, password });
     await user.save();
 
@@ -25,7 +21,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -49,7 +44,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Check session (optional)
 router.get("/check-session", (req, res) => {
   const authHeader = req.headers["authorization"];
   if (!authHeader) return res.json({ active: false });

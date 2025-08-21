@@ -2,7 +2,6 @@ const router = require("express").Router();
 const Order = require("../models/Order");
 const verifyToken = require("../middleware/auth");
 
-// Place a new order
 router.post("/place-order", verifyToken, async (req, res) => {
   try {
     const { items, total, location, phoneNo, payment } = req.body;
@@ -28,7 +27,6 @@ router.post("/place-order", verifyToken, async (req, res) => {
   }
 });
 
-// Get all orders for logged-in user
 router.get("/my-orders", verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
