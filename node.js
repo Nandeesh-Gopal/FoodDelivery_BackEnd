@@ -2,17 +2,19 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");  
+const cookieParser = require("cookie-parser");
+const passport = require("passport");  // ✅ added
 
 dotenv.config();
 
 const app = express();
 app.use(cors({
   origin: "http://localhost:3000",
-  credentials: true               
+  credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());        // ✅ added
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
