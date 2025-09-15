@@ -36,5 +36,32 @@ router.get("/my-orders", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.get("/download", async (req, res) => {
+  try {
+    const orders = await Order.find();
 
+    // convert to CSV
+    const fields = ["_id", "user", "items", "total", "status", "createdAt"];
+    const csvRows = [
+      fields.join(","), // header
+      ...orders.map(o =>
+        [
+          o._id,
+          o.user?.email || "",
+          JSON.stringify(o.items).replace(/,/g, ";"), // avoid comma break
+          o.total,
+          o.status,
+          o.createdAt.toISOString()
+        ].join(",")
+      )
+    ];
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=orders.csv");
+    res.send(csvRows.join("\n"));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to download orders" });
+  }
+});
 module.exports = router;
