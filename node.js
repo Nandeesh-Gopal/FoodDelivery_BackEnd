@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "http://54.92.197.189:3000",
   credentials: true
 }));
 app.use(express.json());
@@ -25,4 +25,7 @@ app.use("/api/hotels", require("./src/routes/hotels"));
 app.use("/api/orders", require("./src/routes/order"));
 
 const PORT = process.env.PORT || 5000;
+app.get('/test', (req, res) => {
+  res.json({ message: 'food delivery backend working!' });
+});
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
